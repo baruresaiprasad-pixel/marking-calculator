@@ -30,7 +30,7 @@ async function downloadPDF() {
 
     // Note: To use your specific logo, upload it to your GitHub repo 
     // and replace 'logo.png' with your file path.
-    const logoImg = 'Black and White Modern Streetwear Sport Logo.png'; 
+    const logoImg = 'logo.png';
     try {
         doc.addImage(logoImg, 'PNG', 85, 5, 40, 40);
     } catch (e) {
