@@ -38,10 +38,10 @@ async function downloadPDF() {
     doc.rect(0, 0, 210, 45, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(22);
-    doc.text("STRATEGIC SCORING ENGINE", 105, 18, { align: "center" });
+    doc.text("NEGATIVE MARKING CALCULATOR ENGINE", 105, 18, { align: "center" });
     doc.setFontSize(10);
     doc.setTextColor(56, 189, 248);
-    doc.text(`Official Dossier | Powered by ECLIPSE7 AI`, 105, 28, { align: "center" });
+    doc.text(`Official Report | Powered by ECLIPSE7 AI Made by Saiprasad Barure `, 105, 28, { align: "center" });
     doc.setFontSize(8);
     doc.text(`VERIFICATION ID: ${reportID}`, 190, 40, { align: "right" });
 
@@ -105,7 +105,7 @@ async function downloadPDF() {
         doc.circle(168, footerY - 2, 12, 'S');
     }
 
-    doc.save(`${student}_Dossier.pdf`);
+    doc.save(`${student}_Report.pdf`);
 }
 
 function drawBar(doc, x, y, w, color, label) {
