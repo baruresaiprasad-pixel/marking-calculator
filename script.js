@@ -122,3 +122,91 @@ async function downloadPDF() {
         alert("Download failed.");
     }
 }
+// Show/Hide subject inputs based on selection
+function toggleSubjectInputs() {
+    const type = document.getElementById('reportType').value;
+    document.getElementById('subjectSection').style.display = type === 'subjectwise' ? 'block' : 'none';
+}
+
+async function downloadPDF() {
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const data = calculateScore();
+        const reportType = document.getElementById('reportType').value;
+        const student = document.getElementById('studentName').value || "Candidate";
+        
+        // --- PAGE 1: OVERALL REPORT (Same as your current layout) ---
+        // (Header, Table, and Overall Performance Bar Graph code goes here as before)
+        renderPageHeader(doc, "Overall Performance"); // Helper for consistency
+        renderOverallTable(doc, data, student);
+        const lastY = renderOverallGraph(doc, data, 120);
+        renderRecommendations(doc, data, lastY + 20);
+
+        // --- PAGE 2: SUBJECT-WISE (Only if selected) ---
+        if (reportType === 'subjectwise') {
+            doc.addPage();
+            renderPageHeader(doc, "Subject-wise Analysis");
+
+            const subjects = [
+                { name: "Physics", c: parseFloat(document.getElementById('phyC').value) || 0, w: parseFloat(document.getElementById('phyW').value) || 0 },
+                { name: "Chemistry", c: parseFloat(document.getElementById('chemC').value) || 0, w: parseFloat(document.getElementById('chemW').value) || 0 },
+                { name: "Math/Biology", c: parseFloat(document.getElementById('mathBioC').value) || 0, w: parseFloat(document.getElementById('mathBioW').value) || 0 },
+                { name: "Additional Sub", c: parseFloat(document.getElementById('extraC').value) || 0, w: parseFloat(document.getElementById('extraW').value) || 0 }
+            ];
+
+            let currentY = 60;
+            subjects.forEach(sub => {
+                if(sub.c > 0 || sub.w > 0) {
+                    doc.setFontSize(12);
+                    doc.setTextColor(15, 23, 42);
+                    doc.text(sub.name, 20, currentY);
+                    
+                    // Small bars for subjects
+                    doc.setFillColor(34, 197, 94); // Green
+                    doc.rect(50, currentY - 4, (sub.c / (sub.c + sub.w || 1)) * 100, 5, 'F');
+                    doc.setFillColor(239, 68, 68); // Red
+                    doc.rect(50, currentY + 2, (sub.w / (sub.c + sub.w || 1)) * 100, 5, 'F');
+                    
+                    currentY += 25;
+                }
+            });
+        }
+
+        // --- FOOTER & STAMP (Always on the LAST page) ---
+        const pageCount = doc.internal.getNumberOfPages();
+        doc.setPage(pageCount); // Go to last page
+        
+        const footerY = 245;
+        doc.setTextColor(0);
+        doc.setFontSize(11);
+        doc.text("MR. PRASAD REDDY", 20, footerY);
+        doc.setFontSize(9);
+        doc.text("Founder & CEO, Eclipse7", 20, footerY + 5);
+        doc.line(20, footerY + 12, 80, footerY + 12);
+
+        try {
+            doc.addImage('stamp.png', 'PNG', 145, footerY - 10, 40, 40);
+        } catch (e) {
+            doc.setDrawColor(180, 0, 0);
+            doc.circle(165, footerY + 10, 15, 'S');
+        }
+
+        doc.save(`${student}_Detailed_Report.pdf`);
+    } catch (err) {
+        console.error(err);
+        alert("Check inputs and try again.");
+    }
+}
+
+// Helper function for the dark header on every page
+function renderPageHeader(doc, title) {
+    doc.setFillColor(15, 23, 42);
+    doc.rect(0, 0, 210, 45, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
+    doc.text("Negative Marking Calculator", 105, 18, { align: "center" });
+    doc.setFontSize(12);
+    doc.setTextColor(56, 189, 248);
+    doc.text(title + " | Powered by ECLIPSE7", 105, 30, { align: "center" });
+}
