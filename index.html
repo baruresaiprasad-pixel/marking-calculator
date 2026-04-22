@@ -55,16 +55,24 @@
         </select>
 
         <div id="subjectSection" style="display: none; margin-top: 20px;">
-            <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 12px; border-bottom: 1px solid #334155; padding-bottom: 5px;">Enter Correct/Wrong for each subject:</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <input type="number" id="phyC" placeholder="Physics Correct">
-                <input type="number" id="phyW" placeholder="Physics Wrong">
+            <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 12px; border-bottom: 1px solid #334155; padding-bottom: 5px;">Subject Breakdown (Total | Correct | Wrong):</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 10px;">
+                <input type="number" id="phyT" placeholder="Phy Total">
+                <input type="number" id="phyC" placeholder="Phy Correct">
+                <input type="number" id="phyW" placeholder="Phy Wrong">
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 10px;">
+                <input type="number" id="chemT" placeholder="Chem Total">
                 <input type="number" id="chemC" placeholder="Chem Correct">
                 <input type="number" id="chemW" placeholder="Chem Wrong">
-                <input type="number" id="mathBioC" placeholder="Math/Bio Correct">
-                <input type="number" id="mathBioW" placeholder="Math/Bio Wrong">
-                <input type="number" id="extraC" placeholder="Other Correct">
-                <input type="number" id="extraW" placeholder="Other Wrong">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 10px;">
+                <input type="number" id="mathBioT" placeholder="M/B Total">
+                <input type="number" id="mathBioC" placeholder="M/B Correct">
+                <input type="number" id="mathBioW" placeholder="M/B Wrong">
             </div>
         </div>
     </div>
