@@ -28,7 +28,7 @@ async function downloadPDF() {
     const student = (document.getElementById('studentName').value || "CANDIDATE").toUpperCase();
     const test = document.getElementById('testName').value || "ASSESSMENT ALPHA";
 
-    // --- DARK ARCHITECTURE HEADER ---
+    // --- HEADER ---
     doc.setFillColor(10, 10, 10);
     doc.rect(0, 0, 210, 50, 'F');
     doc.setTextColor(255, 255, 255);
@@ -38,9 +38,9 @@ async function downloadPDF() {
     doc.setTextColor(0, 242, 255);
     doc.text("POWERED BY ECLIPSE7 STRATEGIC ENGINE | CEO: PRASAD REDDY", 105, 35, { align: "center" });
 
-    // --- DATA TABLE ---
+    // --- MAIN TABLE ---
     doc.autoTable({
-        startY: 55, theme: 'grid', styles: { fontSize: 8, cellPadding: 4 }, headStyles: { fillColor: [20, 20, 20] },
+        startY: 55, theme: 'grid', styles: { fontSize: 8 }, headStyles: { fillColor: [20, 20, 20] },
         body: [
             ['IDENTITY', student], ['ASSESSMENT', test], ['TOTAL QUESTIONS', data.totalQs],
             ['VERIFIED CORRECT', data.correct], ['INACCURACIES', data.wrong],
@@ -50,7 +50,7 @@ async function downloadPDF() {
 
     let currentY = doc.lastAutoTable.finalY + 15;
 
-    // --- SUBJECT BREAKDOWN WITH INTEGRATED BAR LOGIC ---
+    // --- SUBJECT BARS (SCALED BY TOTAL SUBJECT QUESTIONS) ---
     if (reportType === 'subjectwise') {
         doc.setTextColor(0);
         doc.setFontSize(12);
@@ -66,17 +66,17 @@ async function downloadPDF() {
             if (s.t > 0) {
                 currentY += 15;
                 doc.setFontSize(8); doc.setTextColor(100);
-                doc.text(`${s.n}: ${s.c} Correct, ${s.w} Wrong of ${s.t} Total`, 20, currentY);
+                doc.text(`${s.n}: ${s.c} Cor, ${s.w} Wr / ${s.t} Total`, 20, currentY);
                 
-                const barWidth = 100;
-                const cW = (s.c / s.t) * barWidth;
-                const wW = (s.w / s.t) * barWidth;
+                const maxWidth = 100;
+                const cW = (s.c / s.t) * maxWidth;
+                const wW = (s.w / s.t) * maxWidth;
 
-                doc.setFillColor(34, 197, 94); doc.rect(80, currentY - 3, cW, 3, 'F'); // Correct
-                doc.setFillColor(239, 68, 68); doc.rect(80 + cW, currentY - 3, wW, 3, 'F'); // Wrong
+                doc.setFillColor(34, 197, 94); doc.rect(85, currentY - 3, cW, 3, 'F');
+                doc.setFillColor(239, 68, 68); doc.rect(85 + cW, currentY - 3, wW, 3, 'F');
             }
         });
     }
 
-    doc.save(`${student}_Scoring_Report.pdf`);
+    doc.save(`${student}_Dossier.pdf`);
 }
