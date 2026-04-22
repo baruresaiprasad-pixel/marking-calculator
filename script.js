@@ -77,6 +77,51 @@ async function downloadPDF() {
 
     currentY += 40;
 
+    // ... [Existing code above stays the same] ...
+
+        let currentY = doc.lastAutoTable.finalY + 15;
+
+        // --- OVERALL METRICS ---
+        doc.setFontSize(12);
+        doc.setTextColor(0);
+        doc.text("CORE PERFORMANCE METRICS", 20, currentY);
+        const total = data.totalQs || 1;
+        drawBar(doc, 20, currentY + 8, (data.correct / total) * 100, [34, 197, 94], `Accuracy (${data.correct})`);
+        drawBar(doc, 20, currentY + 16, (data.wrong / total) * 100, [239, 68, 68], `Errors (${data.wrong})`);
+        drawBar(doc, 20, currentY + 24, (data.unattempted / total) * 100, [148, 163, 184], `Unattempted (${data.unattempted})`);
+
+        currentY += 40;
+
+        // --- NEW: SUBJECT-WISE ANALYSIS LOGIC ---
+        if (reportType === 'subjectwise') {
+            doc.setFontSize(12);
+            doc.text("DETAILED SUBJECT ANALYSIS", 20, currentY);
+            
+            const subjects = [
+                { name: "Physics", t: parseInt(document.getElementById('phyT').value) || 0, c: parseInt(document.getElementById('phyC').value) || 0, w: parseInt(document.getElementById('phyW').value) || 0 },
+                { name: "Chemistry", t: parseInt(document.getElementById('chemT').value) || 0, c: parseInt(document.getElementById('chemC').value) || 0, w: parseInt(document.getElementById('chemW').value) || 0 },
+                { name: "Math/Bio", t: parseInt(document.getElementById('mathBioT').value) || 0, c: parseInt(document.getElementById('mathBioC').value) || 0, w: parseInt(document.getElementById('mathBioW').value) || 0 }
+            ];
+
+            subjects.forEach(s => {
+                if (s.t > 0) {
+                    currentY += 12;
+                    doc.setFontSize(9);
+                    doc.setTextColor(80);
+                    doc.text(`${s.name}: ${s.c} Correct, ${s.w} Wrong`, 20, currentY);
+                    
+                    // Draw Subject Bar (Green for Correct, Red for Wrong)
+                    const barMaxWidth = 100;
+                    doc.setFillColor(34, 197, 94);
+                    doc.rect(80, currentY - 3, (s.c / s.t) * barMaxWidth, 3, 'F');
+                    doc.setFillColor(239, 68, 68);
+                    doc.rect(80 + (s.c / s.t) * barMaxWidth, currentY - 3, (s.w / s.t) * barMaxWidth, 3, 'F');
+                }
+            });
+            currentY += 15;
+        }
+
+// ... [Existing recommendation and footer code below stays the same] ...
     // --- INTELLIGENT RECOMMENDATIONS ---
     doc.setDrawColor(220);
     doc.line(20, currentY, 190, currentY);
