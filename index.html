@@ -46,3 +46,25 @@
     <script src="script.js"></script>
 </body>
 </html>
+
+<div class="input-group">
+    <label>Which report analytics do you want?</label>
+    <select id="reportType" onchange="toggleSubjectInputs()">
+        <option value="overall">Overall Performance Only</option>
+        <option value="subjectwise">Subject-wise Analysis</option>
+    </select>
+</div>
+
+<div id="subjectSection" style="display: none; border-top: 1px solid #334155; margin-top: 15px; padding-top: 15px;">
+    <p style="color: #38bdf8; font-size: 0.9rem; margin-bottom: 10px;">Enter Correct/Wrong for each subject:</p>
+    <div class="grid-2">
+        <input type="number" id="phyC" placeholder="Physics Correct">
+        <input type="number" id="phyW" placeholder="Physics Wrong">
+        <input type="number" id="chemC" placeholder="Chemistry Correct">
+        <input type="number" id="chemW" placeholder="Chemistry Wrong">
+        <input type="number" id="mathBioC" placeholder="Math/Bio Correct">
+        <input type="number" id="mathBioW" placeholder="Math/Bio Wrong">
+        <input type="number" id="extraC" placeholder="4th Sub (Opt) Correct">
+        <input type="number" id="extraW" placeholder="4th Sub (Opt) Wrong">
+    </div>
+</div>
