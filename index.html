@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Precision Scoring Engine | ECLIPSE7</title>
+    <title>Negative Marking Calculator Engine | ECLIPSE7</title>
     <link rel="icon" type="image/png" href="logo.png">
     <style>
         :root {
@@ -133,12 +133,12 @@
 <body>
 
 <div class="calculator-card">
-    <h1>Strategic Scoring Engine</h1>
-    <p class="subtitle">Powered by ECLIPSE7 AI</p>
+    <h1>Negative Marking Calculator Engine</h1>
+    <p class="subtitle">Powered by ECLIPSE7 AI Made by Saiprasad Barure</p>
 
     <div class="input-group">
         <input type="text" id="studentName" placeholder="Full Student Identity">
-        <input type="text" id="testName" placeholder="Assessment Metadata (e.g. JEE-26)">
+        <input type="text" id="testName" placeholder="Assessment Name (e.g. NEET-26/JEE-26)">
     </div>
 
     <div class="grid-2">
@@ -147,18 +147,18 @@
             <input type="number" id="totalQs" value="75">
         </div>
         <div class="input-group">
-            <label>Upper Bound Marks</label>
+            <label>Maximum Marks</label>
             <input type="number" id="maxMarks" value="300">
         </div>
     </div>
 
     <div class="grid-2">
         <div class="input-group">
-            <label>Attempts</label>
+            <label>Total Attempts</label>
             <input type="number" id="attempted">
         </div>
         <div class="input-group">
-            <label>Inaccuracies</label>
+            <label>Total Wrong Answers</label>
             <input type="number" id="wrong">
         </div>
     </div>
@@ -166,37 +166,37 @@
     <div class="report-settings" style="margin-top: 20px;">
         <label>Intelligence Depth</label>
         <select id="reportType" onchange="toggleSubjectInputs()">
-            <option value="overall">Standard Verification</option>
-            <option value="subjectwise">Granular Subject Analysis</option>
+            <option value="overall">Overall Analysis</option>
+            <option value="subjectwise">Subject-wise Analysis</option>
         </select>
 
         <div id="subjectSection" style="display: none; margin-top: 15px;">
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 10px;">
-                <input type="number" id="phyT" placeholder="Phy T">
-                <input type="number" id="phyC" placeholder="Phy C">
-                <input type="number" id="phyW" placeholder="Phy W">
+                <input type="number" id="phyT" placeholder="Phy Total">
+                <input type="number" id="phyC" placeholder="Phy Correct">
+                <input type="number" id="phyW" placeholder="Phy Wrong">
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 10px;">
-                <input type="number" id="chemT" placeholder="Chem T">
-                <input type="number" id="chemC" placeholder="Chem C">
-                <input type="number" id="chemW" placeholder="Chem W">
+                <input type="number" id="chemT" placeholder="Chem Total">
+                <input type="number" id="chemC" placeholder="Chem Correct">
+                <input type="number" id="chemW" placeholder="Chem Wrong">
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
-                <input type="number" id="mathBioT" placeholder="M/B T">
-                <input type="number" id="mathBioC" placeholder="M/B C">
-                <input type="number" id="mathBioW" placeholder="M/B W">
+                <input type="number" id="mathBioT" placeholder="M/B Total">
+                <input type="number" id="mathBioC" placeholder="M/B Correct">
+                <input type="number" id="mathBioW" placeholder="M/B Wrong">
             </div>
         </div>
     </div>
 
-    <button onclick="calculateScore()" class="ai-btn calc-btn">Execute Analytics</button>
+    <button onclick="calculateScore()" class="ai-btn calc-btn">Check Score</button>
 
     <div class="result-box">
         <p style="font-size: 0.7rem; margin-bottom: 5px; letter-spacing: 1px;">VERIFIED SCORE</p>
         <h2 id="score">0.00</h2>
     </div>
 
-    <button onclick="downloadPDF()" class="ai-btn download-btn">Generate Official Dossier</button>
+    <button onclick="downloadPDF()" class="ai-btn download-btn">Generate Official Report</button>
 </div>
 
 <script src="script.js"></script>
