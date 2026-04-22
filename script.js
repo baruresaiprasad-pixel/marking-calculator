@@ -28,95 +28,123 @@ async function downloadPDF() {
     const student = (document.getElementById('studentName').value || "CANDIDATE").toUpperCase();
     const test = (document.getElementById('testName').value || "STANDARD ASSESSMENT").toUpperCase();
 
-    // --- PREMIUM DARK HEADER ---
-    doc.setFillColor(15, 23, 42); // Deep Navy/Black
-    doc.rect(0, 0, 210, 45, 'F');
+    // --- 1. HEADER (STRICT DARK THEME) ---
+    doc.setFillColor(15, 23, 42); 
+    doc.rect(0, 0, 210, 40, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(20);
-    doc.text("STRATEGIC PERFORMANCE DOSSIER", 105, 22, { align: "center" });
-    doc.setFontSize(9);
+    doc.text("STRATEGIC PERFORMANCE DOSSIER", 105, 20, { align: "center" });
+    doc.setFontSize(8);
     doc.setTextColor(0, 242, 255);
-    doc.text("OFFICIAL REPORT | POWERED BY ECLIPSE7 AI MADE BY SAIPRASAD BARURE", 105, 32, { align: "center" });
-    
-    doc.setDrawColor(0, 242, 255);
-    doc.line(20, 38, 190, 38);
+    doc.text("OFFICIAL REPORT | POWERED BY ECLIPSE7 AI MADE BY SAIPRASAD BARURE", 105, 28, { align: "center" });
 
-    // --- CORE METRICS TABLE ---
+    // --- 2. MAIN SUMMARY TABLE ---
     doc.autoTable({
-        startY: 50,
+        startY: 45,
         theme: 'grid',
-        headStyles: { fillColor: [30, 41, 59] },
-        styles: { fontSize: 9, cellPadding: 3 },
+        headStyles: { fillColor: [30, 41, 59], fontSize: 8 },
+        styles: { fontSize: 8, cellPadding: 2 },
         body: [
             ['STUDENT IDENTITY', student],
             ['ASSESSMENT TAG', test],
             ['TOTAL QUESTIONS', data.totalQs],
             ['VERIFIED CORRECT', data.correct],
             ['IDENTIFIED ERRORS', data.wrong],
-            ['PENALTY DEDUCTION', `- ${data.totalPenalty.toFixed(2)}`],
             ['AGGREGATE SCORE', data.finalScore.toFixed(2)],
             ['EFFICIENCY RATING', `${data.efficiency}%`]
         ],
     });
 
-    let currentY = doc.lastAutoTable.finalY + 15;
+    let currentY = doc.lastAutoTable.finalY + 10;
 
-    // --- CORE PERFORMANCE METRICS (BAR GRAPHS) ---
+    // --- 3. CORE PERFORMANCE METRICS (BARS) ---
     doc.setTextColor(30, 41, 59);
-    doc.setFontSize(11);
+    doc.setFontSize(10);
     doc.text("CORE PERFORMANCE METRICS", 20, currentY);
-    currentY += 8;
+    currentY += 6;
 
     const metrics = [
-        { label: `Accuracy (${data.correct})`, val: data.correct, color: [34, 197, 94] }, // Green
-        { label: `Errors (${data.wrong})`, val: data.wrong, color: [239, 68, 68] },   // Red
-        { label: `Unattempted (${data.unattempted})`, val: data.unattempted, color: [148, 163, 184] } // Gray
+        { label: `Accuracy (${data.correct})`, val: data.correct, color: [34, 197, 94] }, 
+        { label: `Errors (${data.wrong})`, val: data.wrong, color: [239, 68, 68] },   
+        { label: `Unattempted (${data.unattempted})`, val: data.unattempted, color: [148, 163, 184] } 
     ];
 
     metrics.forEach(m => {
-        doc.setFontSize(8);
+        doc.setFontSize(7);
         doc.setTextColor(100);
         doc.text(m.label, 20, currentY + 3);
-        
         const barWidth = (m.val / data.totalQs) * 100;
         doc.setFillColor(m.color[0], m.color[1], m.color[2]);
-        doc.rect(60, currentY, Math.max(barWidth, 1), 4, 'F');
-        currentY += 10;
+        doc.rect(60, currentY, Math.max(barWidth, 2), 3, 'F');
+        currentY += 8;
     });
 
-    // --- STRATEGIC RECOMMENDATIONS ---
-    currentY += 5;
-    doc.setFontSize(11);
+    // --- 4. SUBJECT ANALYSIS (INTEGRATED SINGLE PAGE) ---
+    if (reportType === 'subjectwise') {
+        currentY += 4;
+        doc.setTextColor(30, 41, 59);
+        doc.setFontSize(10);
+        doc.text("GRANULAR SUBJECT ANALYSIS", 20, currentY);
+        currentY += 8;
+
+        const subs = [
+            { n: "PHYSICS", t: parseInt(document.getElementById('phyT').value)||0, c: parseInt(document.getElementById('phyC').value)||0, w: parseInt(document.getElementById('phyW').value)||0 },
+            { n: "CHEMISTRY", t: parseInt(document.getElementById('chemT').value)||0, c: parseInt(document.getElementById('chemC').value)||0, w: parseInt(document.getElementById('chemW').value)||0 },
+            { n: "MATH/BIO", t: parseInt(document.getElementById('mathBioT').value)||0, c: parseInt(document.getElementById('mathBioC').value)||0, w: parseInt(document.getElementById('mathBioW').value)||0 }
+        ];
+
+        subs.forEach(s => {
+            if (s.t > 0) {
+                doc.setFontSize(7);
+                doc.setTextColor(80);
+                doc.text(`${s.n}: ${s.c}C | ${s.w}W`, 20, currentY + 3);
+                const maxWidth = 100;
+                const cWidth = (s.c / s.t) * maxWidth;
+                const wWidth = (s.w / s.t) * maxWidth;
+                doc.setFillColor(34, 197, 94); doc.rect(60, currentY, cWidth, 3, 'F');
+                doc.setFillColor(239, 68, 68); doc.rect(60 + cWidth, currentY, wWidth, 3, 'F');
+                currentY += 8;
+            }
+        });
+    }
+
+    // --- 5. STRATEGIC RECOMMENDATIONS (RE-INTEGRATED) ---
+    currentY += 6;
+    doc.setDrawColor(200);
+    doc.line(20, currentY, 190, currentY);
+    currentY += 8;
+    doc.setFontSize(10);
     doc.setTextColor(30, 41, 59);
     doc.text("STRATEGIC RECOMMENDATIONS:", 20, currentY);
-    doc.setFontSize(9);
-    doc.setTextColor(80);
-    currentY += 8;
-    doc.text(`1. Optimize Attempt Velocity: You left ${data.unattempted} (${((data.unattempted/data.totalQs)*100).toFixed(2)}%) questions unaddressed.`, 20, currentY);
-    currentY += 6;
-    doc.text(`2. Potential Growth: Solving these unattempted items correctly could surge your efficiency by ${((data.unattempted/data.totalQs)*100).toFixed(2)}%.`, 20, currentY);
-
-    // --- SIGNATURE & STAMP BLOCK ---
-    const bottomY = 260;
-    doc.setTextColor(30, 41, 59);
-    doc.setFontSize(10);
-    doc.text("MR. PRASAD REDDY", 20, bottomY);
     doc.setFontSize(8);
-    doc.text("Founder & CEO, ECLIPSE7", 20, bottomY + 5);
-    doc.setTextColor(150);
-    doc.text(`Generation Timestamp: ${new Date().toLocaleString()}`, 20, bottomY + 12);
+    doc.setTextColor(80);
+    currentY += 6;
+    doc.text(`1. Optimize Attempt Velocity: You left ${data.unattempted} questions unaddressed (${((data.unattempted/data.totalQs)*100).toFixed(1)}% of paper).`, 20, currentY);
+    currentY += 5;
+    doc.text(`2. Accuracy Control: Focus on the ${data.wrong} identification errors to prevent negative marks.`, 20, currentY);
+    currentY += 5;
+    doc.text(`3. Target Metric: Achieving 100% accuracy on attempted questions would have scored ${(data.attempted * (data.maxMarks/data.totalQs)).toFixed(2)}.`, 20, currentY);
 
-    // APPROVED STAMP (Red Circle Design)
-    doc.setDrawColor(200, 30, 30);
-    doc.setLineWidth(1);
-    doc.circle(170, bottomY, 15, 'S');
-    doc.setTextColor(200, 30, 30);
-    doc.setFontSize(7);
-    doc.text("ECLIPSE7", 170, bottomY - 5, { align: "center" });
+    // --- 6. FOOTER & STAMP (ANCHORED TO BOTTOM) ---
+    const footerY = 270;
+    doc.setTextColor(30, 41, 59);
     doc.setFontSize(9);
-    doc.text("APPROVED", 170, bottomY + 2, { align: "center" });
-    doc.setFontSize(6);
-    doc.text("PRASAD REDDY", 170, bottomY + 8, { align: "center" });
+    doc.text("MR. PRASAD REDDY", 20, footerY);
+    doc.setFontSize(7);
+    doc.text("Founder & CEO, ECLIPSE7", 20, footerY + 4);
+    doc.setTextColor(150);
+    doc.text(`Verified By: ECLIPSE7 STRATEGIC ENGINE | ${new Date().toLocaleDateString()}`, 20, footerY + 10);
 
-    doc.save(`${student}_Strategic_Report.pdf`);
+    // GitHub Stamp Integration
+    const stampUrl = "https://eclipse7-pixal.github.io/marking-calculator/stamp.png";
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.src = stampUrl;
+    img.onload = function() {
+        doc.addImage(img, 'PNG', 155, 252, 38, 38);
+        doc.save(`${student}_Scoring_Dossier.pdf`);
+    };
+    img.onerror = function() {
+        doc.save(`${student}_Scoring_Dossier.pdf`);
+    };
 }
