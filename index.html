@@ -137,7 +137,34 @@
             text-align: center;
             margin: 20px 0;
         }
+.privacy-note {
+    font-size: 0.65rem;
+    line-height: 1.6;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 25px;
+    padding: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+}
 
+.privacy-note b {
+    color: #fff;
+    font-weight: 600;
+}
+
+.privacy-header {
+    display: block;
+    color: var(--accent-cyan);
+    font-weight: 800;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-family: 'Courier New', Courier, monospace; /* Monospace gives it a tech look */
+}
         .score-val { font-size: 2.5rem; font-weight: 300; color: var(--accent-cyan); }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -212,12 +239,14 @@
     <i class="fa-solid fa-file-arrow-down" style="margin-right: 10px;"></i>
     Export To Intelligence E7 Report
 </button>
- <div class="privacy-note">
-        <span style="color: var(--accent-cyan); font-weight: 800;">PRIVACY ASSURANCE:</span> 
-        Data entered here stays on your device. We do not collect or store any personal metrics/marks. 
-        Enjoy the free service from <b>Saiprasad Barure / Prasad Reddy </b>.
-    </div>
-
+<div class="privacy-note">
+    <span class="privacy-header">
+        <i class="fa-solid fa-shield-halved" style="margin-right: 5px;"></i> 
+        Privacy Assurance
+    </span> 
+    Data entered here stays on your device. We do not collect or store any personal metrics. 
+    Enjoy the free service from <b>Saiprasad Barure / Prasad Reddy</b>.
+</div>
 </div>
 <script src="script.js"></script>
 </body>
