@@ -110,9 +110,25 @@
         .btn-execute { background: #fff; color: #000; }
         .btn-execute:hover { background: var(--accent-cyan); transform: scale(1.01); }
 
-        .btn-dossier { background: transparent; color: #fff; border: 1px solid #333; }
-        .btn-dossier:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+     .btn-dossier {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent; 
+    color: #fff; 
+    border: 1px solid #333;
+    transition: 0.4s ease;
+}
 
+.btn-dossier i {
+    font-size: 1.1rem;
+    color: var(--accent-cyan); /* Makes the icon pop in cyan */
+}
+
+/* Hover effect to keep it consistent with your theme */
+.btn-dossier:hover i {
+    color: #fff;
+}
         .score-display {
             background: #000;
             border: 1px solid #1a1a1a;
