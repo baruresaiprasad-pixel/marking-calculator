@@ -1,8 +1,32 @@
-function toggleSubjectInputs() {
-    const section = document.getElementById('subjectSection');
-    section.style.display = document.getElementById('reportType').value === 'subjectwise' ? 'block' : 'none';
+// --- script.js ---
+
+// 1. Dropdown & UI Logic
+const trigger = document.getElementById('selectedLabel');
+const panel = document.getElementById('selectOptions');
+const hidden = document.getElementById('reportType');
+
+if (trigger) {
+    trigger.addEventListener('click', () => panel.classList.toggle('show'));
 }
 
+document.querySelectorAll('.option-item').forEach(item => {
+    item.addEventListener('click', () => {
+        if(trigger) trigger.textContent = item.textContent;
+        if(hidden) hidden.value = item.getAttribute('data-value');
+        panel.classList.remove('show');
+        toggleSubjectInputs();
+    });
+});
+
+function toggleSubjectInputs() {
+    const section = document.getElementById('subjectSection');
+    const reportType = document.getElementById('reportType').value;
+    if (section) {
+        section.style.display = reportType === 'subjectwise' ? 'block' : 'none';
+    }
+}
+
+// 2. Core Calculation Logic
 function calculateScore() {
     const totalQs = parseFloat(document.getElementById('totalQs').value) || 0;
     const maxMarks = parseFloat(document.getElementById('maxMarks').value) || 0;
@@ -12,13 +36,15 @@ function calculateScore() {
     const correct = attempted - wrong;
     const unattempted = Math.max(0, totalQs - attempted);
     
-    // Logic for Marks and Penalty
     const marksPerCorrect = totalQs > 0 ? (maxMarks / totalQs) : 0;
-    const totalPenalty = wrong * (marksPerCorrect / 4); // Standard 1/4th negative marking
+    const totalPenalty = wrong * (marksPerCorrect / 4); 
     const finalScore = (correct * marksPerCorrect) - totalPenalty;
     const efficiency = maxMarks > 0 ? ((finalScore / maxMarks) * 100).toFixed(2) : 0;
 
-    document.getElementById('score').innerText = finalScore.toFixed(2);
+    const scoreElement = document.getElementById('score');
+    if (scoreElement) {
+        scoreElement.innerText = finalScore.toFixed(2);
+    }
     
     return { 
         totalQs, maxMarks, attempted, wrong, correct, 
@@ -26,7 +52,13 @@ function calculateScore() {
     };
 }
 
+// 3. PDF Export Logic (Restored with Strategic Recommendations)
 async function downloadPDF() {
+    if (!window.jspdf) {
+        alert("PDF Libraries are still loading.");
+        return;
+    }
+
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     const data = calculateScore();
@@ -34,7 +66,7 @@ async function downloadPDF() {
     const student = (document.getElementById('studentName').value || "CANDIDATE").toUpperCase();
     const test = (document.getElementById('testName').value || "ASSESSMENT TAG").toUpperCase();
 
-    // --- 1. DARK HEADER ---
+    // --- 1. Header ---
     doc.setFillColor(15, 23, 42); 
     doc.rect(0, 0, 210, 40, 'F');
     doc.setTextColor(255, 255, 255);
@@ -42,9 +74,9 @@ async function downloadPDF() {
     doc.text("STRATEGIC PERFORMANCE E7 Report", 105, 22, { align: "center" });
     doc.setFontSize(8);
     doc.setTextColor(0, 242, 255);
-    doc.text("OFFICIAL REPORT | POWERED BY ECLIPSE7 AI | CEO&FOUNDER OF ECLIPSE7 AI: SAIPRASAD BARURE", 105, 32, { align: "center" });
+    doc.text("OFFICIAL REPORT | POWERED BY ECLIPSE7 AI | CEO&FOUNDER: SAIPRASAD BARURE", 105, 32, { align: "center" });
 
-    // --- 2. FULL DATA TABLE (INCLUDING MISSING SECTIONS) ---
+    // --- 2. Main Table ---
     doc.autoTable({
         startY: 45,
         theme: 'grid',
@@ -65,7 +97,7 @@ async function downloadPDF() {
 
     let currentY = doc.lastAutoTable.finalY + 10;
 
-    // --- 3. CORE METRICS BARS ---
+    // --- 3. Performance Bars ---
     doc.setTextColor(30, 41, 59);
     doc.setFontSize(10);
     doc.text("CORE PERFORMANCE SCORE", 20, currentY);
@@ -87,7 +119,7 @@ async function downloadPDF() {
         currentY += 8;
     });
 
-    // --- 4. SUBJECT ANALYSIS (INTEGRATED ON ONE PAGE) ---
+    // --- 4. Subject Analysis ---
     if (reportType === 'subjectwise') {
         currentY += 4;
         doc.setTextColor(30, 41, 59);
@@ -116,7 +148,7 @@ async function downloadPDF() {
         });
     }
 
-    // --- 5. STRATEGIC RECOMMENDATIONS (FULL BOX) ---
+    // --- 5. STRATEGIC RECOMMENDATIONS (RESTORED) ---
     currentY += 5;
     doc.setDrawColor(220);
     doc.line(20, currentY, 190, currentY);
@@ -133,21 +165,19 @@ async function downloadPDF() {
     currentY += 5;
     doc.text(`3. Insight: Max possible marks for this test was ${data.maxMarks}. Current Efficiency: ${data.efficiency}%.`, 20, currentY);
 
-    // --- 6. SIGNATURE & GITHUB STAMP ---
+    // --- 6. Footer & Stamp ---
     const footerY = 270;
     doc.setTextColor(30, 41, 59);
     doc.setFontSize(9);
     doc.text("MR. PRASAD REDDY", 20, footerY);
     doc.setFontSize(7);
     doc.text("Founder & CEO, ECLIPSE7", 20, footerY + 4);
-    doc.setTextColor(150);
-    doc.text(`Report Generated: ${new Date().toLocaleString()}`, 20, footerY + 10);
 
-    // Pulling stamp.png from your repository
     const stampUrl = "https://eclipse7-pixal.github.io/marking-calculator/stamp.png";
     const img = new Image();
-    img.crossOrigin = "Anonymous";
+    img.crossOrigin = "Anonymous"; 
     img.src = stampUrl;
+    
     img.onload = function() {
         doc.addImage(img, 'PNG', 155, 252, 38, 38);
         doc.save(`${student}_Official_E7_Report.pdf`);
