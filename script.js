@@ -1,6 +1,7 @@
-// --- 1. UI & DROPDOWN ENGINE ---
+// --- STAGE 1: SECURE UI INITIALIZATION ---
 /**
- * Ensures the custom dropdowns update hidden inputs and trigger UI changes.
+ * Advanced Dropdown Controller: Links custom UI to hidden data inputs.
+ * Ensures that changes in Ratio or Mode trigger an immediate score update.
  */
 function initDropdown(containerId, triggerId, panelId, hiddenInputId, callback) {
     const container = document.getElementById(containerId);
@@ -13,25 +14,28 @@ function initDropdown(containerId, triggerId, panelId, hiddenInputId, callback) 
     const options = panel.querySelectorAll('.option-item');
 
     trigger.addEventListener('click', (e) => {
-        e.stopPropagation();
+        e.stopPropagation(); // Prevents immediate closing
         panel.classList.toggle('show');
         container.classList.toggle('active');
     });
 
     options.forEach(item => {
         item.addEventListener('click', () => {
+            // Update Visuals and Data
             trigger.textContent = item.textContent;
             hidden.value = item.getAttribute('data-value');
+            
+            // Close Panel
             panel.classList.remove('show');
             container.classList.remove('active');
             
-            // Run the calculation immediately when ratio or mode changes
+            // Execute Linked Actions
             calculateScore(); 
             if (callback) callback();
         });
     });
 
-    // Close dropdown if clicking outside
+    // Global listener to close dropdowns when clicking away
     window.addEventListener('click', (e) => {
         if (!container.contains(e.target)) {
             panel.classList.remove('show');
@@ -40,7 +44,7 @@ function initDropdown(containerId, triggerId, panelId, hiddenInputId, callback) 
     });
 }
 
-// Initialize the Ratio and Analytics Mode menus
+// Deploying UI Listeners
 initDropdown('customSelect', 'selectedLabel', 'selectOptions', 'reportType', toggleSubjectInputs);
 initDropdown('ratioSelectContainer', 'ratioLabel', 'ratioOptions', 'markingRatio', calculateScore);
 
@@ -52,26 +56,28 @@ function toggleSubjectInputs() {
     }
 }
 
-// --- 2. THE MATHEMATICAL ENGINE ---
+// --- STAGE 2: PRECISION CALCULATION ENGINE ---
 /**
- * Calculates scores based on the dynamic ratio and user inputs.
+ * Mathematical core for Eclipse7.
+ * Calculates net score using dynamic penalty ratios.
  */
 function calculateScore() {
+    // Basic Params
     const totalQs = parseFloat(document.getElementById('totalQs').value) || 0;
     const maxMarks = parseFloat(document.getElementById('maxMarks').value) || 0;
     const attempted = parseFloat(document.getElementById('attempted').value) || 0;
     const wrong = parseFloat(document.getElementById('wrong').value) || 0;
     const ratio = parseFloat(document.getElementById('markingRatio').value) || 0;
     
-    if (totalQs === 0) {
-        document.getElementById('score').innerText = "0.00";
+    // Safety check to avoid division by zero
+    if (totalQs <= 0) {
+        if(document.getElementById('score')) document.getElementById('score').innerText = "0.00";
         return { totalQs: 0, finalScore: 0 };
     }
 
+    // Logic Execution
     const correct = Math.max(0, attempted - wrong);
     const unattempted = Math.max(0, totalQs - attempted);
-    
-    // Core Logic: Penalty is a fraction of the Marks Per Question
     const marksPerQ = maxMarks / totalQs;
     const penaltyPerQ = marksPerQ * ratio;
     const totalPenalty = wrong * penaltyPerQ; 
@@ -79,6 +85,7 @@ function calculateScore() {
     const finalScore = (correct * marksPerQ) - totalPenalty;
     const efficiency = maxMarks > 0 ? ((finalScore / maxMarks) * 100).toFixed(2) : 0;
 
+    // Live UI Update
     const scoreElement = document.getElementById('score');
     if (scoreElement) {
         scoreElement.innerText = finalScore.toFixed(2);
@@ -90,38 +97,42 @@ function calculateScore() {
     };
 }
 
-// --- 3. THE E7 INTELLIGENCE EXPORTER ---
+// --- STAGE 3: E7 INTELLIGENCE PDF EXPORTER ---
 /**
- * Generates the PDF using jsPDF and AutoTable.
+ * Generates a formal performance dossier for the student.
  */
 async function downloadPDF() {
-    const { jsPDF } = window.jspdf;
+    // Verify jspdf availability
+    const { jsPDF } = window.jspdf || {};
     if (!jsPDF) {
-        alert("Library Error: Ensure jsPDF scripts are in your HTML <head>.");
+        alert("CRITICAL: PDF Library not detected. Please ensure CDN links are in the HTML head.");
         return;
     }
 
     const doc = new jsPDF();
-    const data = calculateScore(); // Get latest data
-    const student = (document.getElementById('studentName').value || "CANDIDATE").toUpperCase();
-    const test = (document.getElementById('testName').value || "ASSESSMENT").toUpperCase();
+    const data = calculateScore(); // Ensure we have the freshest calculations
+    
+    // Identity Parsing
+    const student = (document.getElementById('studentName').value || "ANONYMOUS CANDIDATE").toUpperCase();
+    const test = (document.getElementById('testName').value || "GENERAL ASSESSMENT").toUpperCase();
     const reportType = document.getElementById('reportType').value;
 
-    // --- Header Design ---
-    doc.setFillColor(15, 23, 42); 
+    // --- Header Construction ---
+    doc.setFillColor(15, 23, 42); // Deep Slate
     doc.rect(0, 0, 210, 40, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(22);
-    doc.text("STRATEGIC PERFORMANCE E7 REPORT", 105, 22, { align: "center" });
+    doc.setFontSize(20);
+    doc.text("STRATEGIC PERFORMANCE E7 DOSSIER", 105, 22, { align: "center" });
     doc.setFontSize(8);
-    doc.setTextColor(0, 242, 255);
-    doc.text("OFFICIAL REPORT | POWERED BY ECLIPSE7 AI | FOUNDER: SAIPRASAD BARURE", 105, 32, { align: "center" });
+    doc.setTextColor(0, 242, 255); // Cyan branding
+    doc.text("OFFICIAL INTELLIGENCE REPORT | FOUNDER: SAIPRASAD BARURE", 105, 32, { align: "center" });
 
-    // --- Performance Table ---
+    // --- Core Data Matrix ---
     doc.autoTable({
         startY: 45,
         theme: 'grid',
         headStyles: { fillColor: [30, 41, 59], fontSize: 9 },
+        styles: { cellPadding: 3, fontSize: 9 },
         body: [
             ['STUDENT IDENTITY', student],
             ['ASSESSMENT TAG', test],
@@ -134,17 +145,17 @@ async function downloadPDF() {
 
     let currentY = doc.lastAutoTable.finalY + 15;
 
-    // --- Subject Breakdown (Conditional) ---
+    // --- Conditional Subject Breakdown ---
     if (reportType === 'subjectwise') {
         doc.setTextColor(30, 41, 59);
-        doc.setFontSize(10);
-        doc.text("SUBJECT-LEVEL ANALYTICS", 20, currentY);
+        doc.setFontSize(11);
+        doc.text("SUBJECT-LEVEL PERFORMANCE DATA", 14, currentY);
         currentY += 10;
 
         const subjects = [
             { id: 'phy', name: 'PHYSICS' },
             { id: 'chem', name: 'CHEMISTRY' },
-            { id: 'mathBio', name: 'MATH/BIO' }
+            { id: 'mathBio', name: 'MATH / BIOLOGY' }
         ];
 
         subjects.forEach(sub => {
@@ -153,33 +164,34 @@ async function downloadPDF() {
             const w = parseInt(document.getElementById(`${sub.id}W`).value) || 0;
 
             if (t > 0) {
-                doc.setFontSize(8);
-                doc.setTextColor(100);
-                doc.text(`${sub.name}: ${c} Correct, ${w} Wrong out of ${t}`, 20, currentY);
-                currentY += 7;
+                doc.setFontSize(9);
+                doc.setTextColor(80);
+                doc.text(`${sub.name}: ${c} Correct | ${w} Wrong | ${t} Total Q.`, 14, currentY);
+                currentY += 8;
             }
         });
     }
 
-    // --- Signature & Stamp ---
-    const footerY = 260;
+    // --- Footer & CEO Authentication ---
+    const footerY = 265;
     doc.setTextColor(30, 41, 59);
     doc.setFontSize(10);
-    doc.text("MR. PRASAD REDDY", 20, footerY);
+    doc.text("MR. PRASAD REDDY", 14, footerY);
     doc.setFontSize(8);
-    doc.text("Founder & CEO, ECLIPSE7", 20, footerY + 5);
+    doc.text("Founder & CEO, ECLIPSE7", 14, footerY + 5);
 
-    // Handling the stamp image
+    // Official Stamp Integration
     const stampUrl = "https://eclipse7-pixal.github.io/marking-calculator/stamp.png";
     const img = new Image();
     img.crossOrigin = "Anonymous";
     img.src = stampUrl;
 
     img.onload = () => {
-        doc.addImage(img, 'PNG', 150, 240, 40, 40);
-        doc.save(`${student}_E7_Analytics.pdf`);
+        doc.addImage(img, 'PNG', 155, 245, 40, 40);
+        doc.save(`${student}_E7_Report.pdf`);
     };
     img.onerror = () => {
-        doc.save(`${student}_E7_Analytics.pdf`); // Save even if stamp fails
+        // Fallback: Save PDF even if image fails to load
+        doc.save(`${student}_E7_Report.pdf`);
     };
 }
