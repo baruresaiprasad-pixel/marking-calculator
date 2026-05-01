@@ -345,65 +345,7 @@
 </div>
 
 <script>
-    // Universal Dropdown Logic
-    function initDropdown(containerId, triggerId, panelId, hiddenInputId, callback) {
-        const container = document.getElementById(containerId);
-        const trigger = document.getElementById(triggerId);
-        const panel = document.getElementById(panelId);
-        const hidden = document.getElementById(hiddenInputId);
-        const options = panel.querySelectorAll('.option-item');
-
-        trigger.addEventListener('click', () => {
-            panel.classList.toggle('show');
-            container.classList.toggle('active');
-        });
-
-        options.forEach(item => {
-            item.addEventListener('click', () => {
-                trigger.textContent = item.textContent;
-                hidden.value = item.getAttribute('data-value');
-                panel.classList.remove('show');
-                container.classList.remove('active');
-                if (callback) callback();
-            });
-        });
-
-        window.addEventListener('click', (e) => {
-            if (!container.contains(e.target)) {
-                panel.classList.remove('show');
-                container.classList.remove('active');
-            }
-        });
-    }
-
-    // Initialize both dropdowns
-    initDropdown('customSelect', 'selectedLabel', 'selectOptions', 'reportType', toggleSubjectInputs);
-    initDropdown('ratioSelectContainer', 'ratioLabel', 'ratioOptions', 'markingRatio', null);
-
-    function toggleSubjectInputs() {
-        const type = document.getElementById('reportType').value;
-        const section = document.getElementById('subjectSection');
-        section.style.display = (type === 'subjectwise') ? 'block' : 'none';
-    }
-
-    function calculateScore() {
-        const total = parseFloat(document.getElementById('totalQs').value) || 0;
-        const max = parseFloat(document.getElementById('maxMarks').value) || 0;
-        const att = parseFloat(document.getElementById('attempted').value) || 0;
-        const wrg = parseFloat(document.getElementById('wrong').value) || 0;
-        const ratio = parseFloat(document.getElementById('markingRatio').value) || 0;
-
-        if (total === 0) return;
-        const marksPerQ = max / total;
-        const negativePenalty = marksPerQ * ratio;
-        const score = (att - wrg) * marksPerQ - (wrg * negativePenalty);
-        
-        document.getElementById('score').innerText = score.toFixed(2);
-    }
-
-    function downloadPDF() {
-        alert("E7 Intelligence Report generating...");
-    }
+<script src="script.js"></script>
 </script>
 </body>
 </html>
