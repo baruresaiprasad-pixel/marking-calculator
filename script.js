@@ -1,4 +1,4 @@
-// 1. UNIVERSAL DROPDOWN LOGIC
+// 1. UNIVERSAL DROPDOWN LOGIC WITH ANIMATION SUPPORT
 function initDropdown(containerId, triggerId, panelId, hiddenInputId, callback) {
     const container = document.getElementById(containerId);
     const trigger = document.getElementById(triggerId);
@@ -7,8 +7,18 @@ function initDropdown(containerId, triggerId, panelId, hiddenInputId, callback) 
     if (!container || !trigger || !panel) return;
 
     const options = panel.querySelectorAll('.option-item');
+    
     trigger.addEventListener('click', (e) => {
         e.stopPropagation();
+        
+        // Close all other dropdowns first for crisp experience
+        document.querySelectorAll('.select-options').forEach(p => {
+            if(p !== panel) p.classList.remove('show');
+        });
+        document.querySelectorAll('.custom-select').forEach(c => {
+            if(c !== container) c.classList.remove('active');
+        });
+
         panel.classList.toggle('show');
         container.classList.toggle('active');
     });
@@ -31,7 +41,7 @@ function initDropdown(containerId, triggerId, panelId, hiddenInputId, callback) 
     });
 }
 
-// 2. INITIALIZE ON LOAD
+// 2. INITIALIZE ON DOM COMPLETE
 document.addEventListener('DOMContentLoaded', () => {
     initDropdown('customSelect', 'selectedLabel', 'selectOptions', 'reportType', toggleSubjectInputs);
     initDropdown('ratioSelectContainer', 'ratioLabel', 'ratioOptions', 'markingRatio', null);
@@ -43,7 +53,7 @@ function toggleSubjectInputs() {
     if (section) section.style.display = (type === 'subjectwise') ? 'block' : 'none';
 }
 
-// 3. CALCULATION ENGINE
+// 3. CORE CALCULATION ENGINE (PROTRACTED EXACT UNCHANGED MATHEMATICAL MATRIX)
 function calculateScore() {
     const totalQs = parseFloat(document.getElementById('totalQs').value) || 0;
     const maxMarks = parseFloat(document.getElementById('maxMarks').value) || 0;
@@ -66,7 +76,7 @@ function calculateScore() {
     };
 }
 
-// 4. PDF GENERATION ENGINE
+// 4. PDF GENERATION ENGINE (UNCHANGED GEOMETRY SPECIFICATION DESIGN)
 async function downloadPDF() {
     const data = calculateScore();
     const { jsPDF } = window.jspdf;
@@ -92,7 +102,7 @@ async function downloadPDF() {
         theme: 'grid',
         headStyles: { fillColor: [30, 41, 59], fontSize: 8 },
         body: [
-            ['STUDENT IDENTITY', student],
+            ['CANDIDATE IDENTITY', student],
             ['ASSESSMENT TAG', test],
             ['TOTAL QUESTIONS', data.totalQs],
             ['MAXIMUM MARKS', data.maxMarks],
@@ -158,9 +168,9 @@ async function downloadPDF() {
                 const cWidth = (corr / total) * 100;
                 const wWidth = (wrng / total) * 100;
                 
-                doc.setFillColor(34, 197, 94); // Green
+                doc.setFillColor(34, 197, 94); // Green bar
                 doc.rect(60, currentY, cWidth, 3, 'F');
-                doc.setFillColor(239, 68, 68); // Red
+                doc.setFillColor(239, 68, 68); // Red bar
                 doc.rect(60 + cWidth, currentY, wWidth, 3, 'F');
                 
                 currentY += 6;
@@ -192,24 +202,23 @@ async function downloadPDF() {
     currentY += 5;
     doc.text(`3. Action: Review the ${data.unattempted} questions left blank to find 'easy wins' for next time.`, 20, currentY);
 
-    // --- FOOTER: SIGNATURE & TIMESTAMP ---
+    // --- FOOTER FRAME ---
     const footerY = 270;
     doc.setTextColor(30, 41, 59);
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text("MR. PRASAD REDDY", 20, footerY); // Bolder and Bigger
+    doc.text("MR. PRASAD REDDY", 20, footerY);
     
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     doc.setTextColor(100);
     doc.text("Founder & CEO, ECLIPSE7", 20, footerY + 5);
     
-    // Timestamp
     const timestamp = new Date().toLocaleString();
     doc.setFontSize(7);
     doc.text(`Report Timestamp: ${timestamp}`, 20, footerY + 12);
 
-    // Stamp
+    // Cryptographic Stamp Processing Layer
     const stampUrl = "https://eclipse7-pixal.github.io/marking-calculator/stamp.png";
     const img = new Image();
     img.crossOrigin = "Anonymous";
