@@ -158,7 +158,7 @@ async function downloadPDF() {
     doc.setTextColor(15, 23, 42); // Deep high-contrast charcoal slate text
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
-    doc.text("QUANTUM ENGINE PERFORMANCE DOSSIER", 16, 21);
+    doc.text("NEGATIVE MARKING PERFORMANCE REPORT", 16, 21);
     
     doc.setFont("courier", "bold");
     doc.setFontSize(8);
@@ -168,7 +168,7 @@ async function downloadPDF() {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     doc.setTextColor(100, 116, 139); // Clean mid-tone slate text
-    doc.text("ECLIPSE7 PERFORMANCE MATRIX LABORATORY // REPRESENTATIVE: SAIPRASAD BARURE", 16, 35);
+    doc.text("ECLIPSE7 PERFORMANCE MATRIX LABORATORY | REPRESENTATIVE: SAIPRASAD BARURE", 16, 35);
 
     // Discrete Top-Right Blueprint Status Token Badge
     doc.setFillColor(241, 245, 249);
@@ -284,12 +284,12 @@ async function downloadPDF() {
     doc.line(10, meterY - 4, 200, meterY - 4);
     
     doc.setTextColor(15, 23, 42); doc.setFont("helvetica", "bold"); doc.setFontSize(9);
-    doc.text("HARDWARE SIMULATION HUD ARRAYS", 11, meterY);
+    doc.text("BASIC INFO OF RESULT", 11, meterY);
     meterY += 5;
 
     const dataMeters = [
-        { title: "ACCURACY TRACKER DISPATCH ARRAY", value: data.correct, max: data.totalQs || 1, color: [14, 165, 233] },
-        { title: "PENALTY INFLICTED INCIDENCE MATRIX", value: data.wrong, max: data.totalQs || 1, color: [168, 85, 247] }
+        { title: "ACCURACY TRACKER", value: data.correct, max: data.totalQs || 1, color: [14, 165, 233] },
+        { title: "PENALTY INFLICTED", value: data.wrong, max: data.totalQs || 1, color: [168, 85, 247] }
     ];
 
     dataMeters.forEach(mItem => {
@@ -409,10 +409,10 @@ async function downloadPDF() {
     doc.text("MR. PRASAD REDDY", 14, finalFooterY + 4);
     
     doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(100, 116, 139);
-    doc.text("Chief Executive Officer & Founder, ECLIPSE7 COGNITIVE INTEGRITY CORE", 14, finalFooterY + 9);
+    doc.text("Chief Executive Officer & Founder of ECLIPSE7 ", 14, finalFooterY + 9);
     
     doc.setFont("courier", "bold"); doc.setFontSize(7); doc.setTextColor(5, 150, 105); // Clean dark-green text for secure physical prints
-    doc.text("STATUS STATUS: COGNITIVE SYSTEM RECORD INTEGRITY APPROVED & SECURELY VERIFIED", 14, finalFooterY + 14);
+    doc.text("STATUS: COGNITIVE SYSTEM RECORD INTEGRITY APPROVED & SECURELY VERIFIED", 14, finalFooterY + 14);
     
     doc.setFont("courier", "normal"); doc.setFontSize(6); doc.setTextColor(148, 163, 184);
     doc.text(`HASH_BLOCK_ID: E7_PRINT_DOCK_RECONSTRUCT_METRIC_VALID_RUN_${timestamp.replace(/ /g, "_")}`, 14, finalFooterY + 21);
@@ -426,10 +426,10 @@ async function downloadPDF() {
     img.onload = function() {
         // Clean placement inside open clean coordinate vectors free of block background collision issues
         doc.addImage(img, 'PNG', 158, 244, 36, 36);
-        doc.save(`${student}_E7_PRO_MAX_PRINT_REPORT.pdf`);
+        doc.save(`${student}_Eclipse7_NME_REPORT.pdf`);
     };
     img.onerror = () => {
         // Absolute failover execution fallback context if proxy firewalls deny cross-origin imaging
-        doc.save(`${student}_E7_PRO_MAX_PRINT_REPORT.pdf`);
+        doc.save(`${student}_Eclipse7_NME_REPORT.pdf`);
     };
 }
